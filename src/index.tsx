@@ -13,7 +13,7 @@ export function App() {
 
 	const [isComputing, setIsComputing] = useState<boolean>(false);
 
-	const [lThreshold, setLThreshold] = useState(0.5);
+	const [lThreshold, setLThreshold] = useState(128);
 
 	const createImageData = async (imageBuffer: ArrayBuffer) => {
 		// Create blob
@@ -94,7 +94,7 @@ export function App() {
 			setIsComputing(false);
 		};
 
-		worker.postMessage({ imageData, threshold: lThreshold });
+		worker.postMessage({ imageData, minT: 0, maxT: lThreshold });
 	};
 
 	return (
@@ -160,13 +160,17 @@ export function App() {
 										<input
 											type="range"
 											min="0"
-											max="100"
+											max="255"
 											className="range range-primary range-sm w-full"
 											name="lightness-threshold"
-											value={lThreshold * 100}
-											onChange={(e) => setLThreshold(e.target.value / 100.0)}
+											value={lThreshold}
+											onChange={(e) =>
+												e.target && setLThreshold(e.target.value)
+											}
 										/>
-										<p className="w-10">{lThreshold}</p>
+										<p className="w-10">
+											{((lThreshold / 255) * 100).toFixed(0)}%
+										</p>
 									</div>
 								</div>
 							</div>
